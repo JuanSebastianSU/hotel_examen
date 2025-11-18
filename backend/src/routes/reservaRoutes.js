@@ -1,24 +1,26 @@
 const express = require("express");
 const {
-  crearReserva,
   listarReservas,
   obtenerReservaPorId,
+  crearReserva,
   actualizarReserva,
   eliminarReserva,
   obtenerPromedioTotal,
+  obtenerResumenPorHabitacion,
 } = require("../controllers/reservaController");
 
 const router = express.Router();
 
-// /api/reservas/
+// Lista con filtros opcionales
 router.get("/", listarReservas);
-router.post("/", crearReserva);
 
-// /api/reservas/promedio-total
+// Funciones extra
 router.get("/promedio-total", obtenerPromedioTotal);
+router.get("/resumen-por-habitacion", obtenerResumenPorHabitacion);
 
-// /api/reservas/:id
+// CRUD por ID
 router.get("/:id", obtenerReservaPorId);
+router.post("/", crearReserva);
 router.put("/:id", actualizarReserva);
 router.delete("/:id", eliminarReserva);
 
