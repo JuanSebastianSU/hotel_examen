@@ -5,63 +5,77 @@ import { obtenerReserva } from "../api/reservasApi";
 function ReservaDetalle() {
   const { id } = useParams();
   const navigate = useNavigate();
+
   const [reserva, setReserva] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const cargar = async () => {
       try {
-        const res = await obtenerReserva(id);
-        setReserva(res.data);
+        const resp = await obtenerReserva(id);
+        setReserva(resp.data);
       } catch (err) {
         console.error(err);
-        setError("No se pudo cargar la reserva.");
+        const msg =
+          err.response?.data?.message ||
+          "Error al cargar los detalles de la reserva.";
+        setError(msg);
+      } finally {
+        setLoading(false);
       }
     };
 
     cargar();
   }, [id]);
 
-  if (error) {
-    return (
-      <div>
-        <p style={{ color: "red" }}>{error}</p>
-        <button onClick={() => navigate("/reservas")}>Volver</button>
-      </div>
-    );
-  }
-
-  if (!reserva) {
-    return <p>Cargando...</p>;
-  }
-
   return (
-    <div>
-      <h2>Detalle de reserva</h2>
-      <p>
-        <strong>Cliente:</strong> {reserva.cliente}
-      </p>
-      <p>
-        <strong>Habitación:</strong> {reserva.habitacion}
-      </p>
-      <p>
-        <strong>Fecha de entrada:</strong>{" "}
-        {reserva.fechaEntrada ? reserva.fechaEntrada.slice(0, 10) : ""}
-      </p>
-      <p>
-        <strong>Fecha de salida:</strong>{" "}
-        {reserva.fechaSalida ? reserva.fechaSalida.slice(0, 10) : ""}
-      </p>
-      <p>
-        <strong>Total:</strong> ${reserva.total}
-      </p>
+    <div className="contenedor">
+      <h1>Detalle de reserva</h1>
 
-      <button onClick={() => navigate(`/reservas/${reserva._id}/editar`)}>
-        Editar
-      </button>{" "}
-      <button onClick={() => navigate("/reservas")}>
-        Volver al listado
-      </button>
+      {error && <p className="error">{error}</p>}
+
+      {loading ? (
+        <p>Cargando...</p>
+      ) : reserva ? (
+        <section className="card detalle-reserva">
+          <p>
+            <strong>Cliente:</strong> {reserva.cliente}
+          </p>
+          <p>
+            <strong>Habitación:</strong> {reserva.habitacion}
+          </p>
+          <p>
+            <strong>Fecha de entrada:</strong>{" "}
+            {new Date(reserva.fechaEntrada).toLocaleDateString()}
+          </p>
+          <p>
+            <strong>Fecha de salida:</strong>{" "}
+            {new Date(reserva.fechaSalida).toLocaleDateString()}
+          </p>
+          <p>
+            <strong>Total:</strong> {reserva.total}
+          </p>
+
+          <div className="acciones-formulario">
+            <button
+              type="button"
+              onClick={() => navigate(`/reservas/${id}/editar`)}
+            >
+              Editar
+            </button>
+            <button
+              type="button"
+              className="btn-secundario"
+              onClick={() => navigate("/reservas")}
+            >
+              Volver al listado
+            </button>
+          </div>
+        </section>
+      ) : (
+        <p>No se encontró la reserva.</p>
+      )}
     </div>
   );
 }

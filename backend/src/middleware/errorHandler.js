@@ -1,27 +1,29 @@
-const errorHandler = (err, req, res, next) => {
+const mongoose = require("mongoose");
+
+module.exports = (err, req, res, next) => {
   console.error(err);
 
-  // Error de ID inválido
-  if (err.name === "CastError") {
-    return res.status(400).json({ message: "ID inválido" });
+  if (res.headersSent) {
+    return next(err);
   }
 
-  // Error de validación de Mongoose
+  let status = 500;
+  let message = "Error interno del servidor.";
+
   if (err.name === "ValidationError") {
-    const errors = {};
-    Object.keys(err.errors).forEach((key) => {
-      errors[key] = err.errors[key].message;
-    });
-
-    return res.status(400).json({
-      message: "Datos inválidos",
-      errors,
-    });
+    status = 400;
+    message = Object.values(err.errors)
+      .map((e) => e.message)
+      .join(" ");
+  } else if (err.name === "CastError") {
+    status = 400;
+    message = "ID inválido.";
+  } else if (err.code && err.code === 11000) {
+    status = 409;
+    message = "Registro duplicado.";
+  } else if (err.message) {
+    message = err.message;
   }
 
-  res.status(500).json({
-    message: "Error del servidor",
-  });
+  res.status(status).json({ message });
 };
-
-module.exports = errorHandler;

@@ -1,25 +1,32 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:4000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:4000/api";
 
-export const reservasClient = axios.create({
+const reservasClient = axios.create({
   baseURL: `${API_BASE_URL}/reservas`,
 });
 
-export const listarReservas = (params) =>
-  reservasClient.get("/", { params });
+// Listar reservas con filtros opcionales (habitacion, fechaEntrada)
+export const listarReservas = (params) => reservasClient.get("/", { params });
 
-export const obtenerReserva = (id) =>
-  reservasClient.get(`/${id}`);
+// Obtener una reserva por ID
+export const obtenerReserva = (id) => reservasClient.get(`/${id}`);
 
-export const crearReserva = (data) =>
-  reservasClient.post("/", data);
+// Crear reserva
+export const crearReserva = (data) => reservasClient.post("/", data);
 
+// Actualizar reserva
 export const actualizarReserva = (id, data) =>
   reservasClient.put(`/${id}`, data);
 
-export const eliminarReserva = (id) =>
-  reservasClient.delete(`/${id}`);
+// Eliminar reserva
+export const eliminarReserva = (id) => reservasClient.delete(`/${id}`);
 
+// Función extra 1: promedio del total reservado
 export const obtenerPromedioTotal = () =>
   reservasClient.get("/promedio-total");
+
+// Función extra 2: resumen por habitación
+export const obtenerResumenPorHabitacion = () =>
+  reservasClient.get("/resumen-por-habitacion");
