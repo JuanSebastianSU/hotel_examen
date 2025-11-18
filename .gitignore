@@ -1,0 +1,21 @@
+# General
+.DS_Store
+Thumbs.db
+
+# Backend
+backend/node_modules/
+backend/.env
+
+# Frontend
+hotel-reservas-frontend/node_modules/
+hotel-reservas-frontend/.env
+
+# Build outputs
+backend/dist/
+hotel-reservas-frontend/dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
